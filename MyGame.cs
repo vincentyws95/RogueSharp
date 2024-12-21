@@ -1,23 +1,27 @@
 ﻿using RogueSharpTutorial.Core;
+using RogueSharpTutorial.System;
 using SadConsole.Configuration;
 
 namespace RogueSharpTutorial
 {
     public class MyGame
     {
+        public static DungeonMap DungeonMap { get; private set; }
+        public static Player Player { get; private set; }
 
         public static void Main()
         {
+            Settings.WindowTitle = "RogueSharp Tutorial - Level 1";
 
-        Settings.WindowTitle = "RogueSharp Tutorial - Level 1";
+            Builder configuration = new Builder()
+                    .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
+                    .OnStart(Startup);
 
-        Builder configuration = new Builder()
-                .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
-                .OnStart(Startup);
+            Game.Create(configuration);
+            Game.Instance.Run();
+            Game.Instance.Dispose();
 
-        Game.Create(configuration);
-        Game.Instance.Run();
-        Game.Instance.Dispose();
+
         }
 
         private static void Startup(object? sender, GameHost host)
@@ -28,65 +32,57 @@ namespace RogueSharpTutorial
             Game.Instance.Screen = container;
 
             //Map Console
-            Console mapConsole = new(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT);
-            mapConsole.Position = (1, GameSettings.INVENTORY_HEIGHT + 1);
-            mapConsole.Surface.DefaultBackground = Colors.FloorBackground;
-            mapConsole.Clear();
-            mapConsole.Cursor.IsEnabled = true;
-            mapConsole.Cursor.MouseClickReposition = true;
-            mapConsole.MoveToFrontOnMouseClick = true;
-            mapConsole.FocusOnMouseClick = true;
-            mapConsole.Print(1, 1, "Map");
-
+            Console mapConsole = CreateConsole(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT, Colors.FloorBackground, (1, GameSettings.INVENTORY_HEIGHT + 1)); 
             container.Children.Add(mapConsole);
 
             // Message console
             int startingPosition = GameSettings.INVENTORY_HEIGHT + GameSettings.MAP_HEIGHT + 1;
-            Console messageConsole = new Console(GameSettings.MESSAGE_WIDTH, GameSettings.MESSAGE_HEIGHT);
-            messageConsole.Position = new Point(1, startingPosition);
-            messageConsole.Surface.DefaultBackground = Colors.MessagesBackground;
-            messageConsole.Clear();
-            messageConsole.Cursor.Position = new Point(1, 2);
-            messageConsole.Cursor.IsEnabled = true;
-            messageConsole.FocusOnMouseClick = true;
-            messageConsole.MoveToFrontOnMouseClick = true;
+            Console messageConsole = CreateConsole(GameSettings.MESSAGE_WIDTH, GameSettings.MESSAGE_HEIGHT, Colors.MessagesBackground, (1, startingPosition));
             messageConsole.Print(1, 1, "Messages");
 
             container.Children.Add(messageConsole);
-            container.Children.MoveToBottom(messageConsole);
 
             // Stat console
-            Console statConsole = new Console(GameSettings.STAT_WIDTH, GameSettings.STAT_HEIGHT);
-            startingPosition = GameSettings.INVENTORY_WIDTH+1;
-            statConsole.Position = new Point(startingPosition, 1);
-            statConsole.Surface.DefaultBackground = Colors.StatsBackground;
-            statConsole.Clear();
-            statConsole.Cursor.Position = new Point(1, 2);
-            statConsole.Cursor.IsEnabled = true;
-            statConsole.FocusOnMouseClick = true;
-            statConsole.MoveToFrontOnMouseClick = true;
+            Console statConsole = CreateConsole(GameSettings.STAT_WIDTH, GameSettings.STAT_HEIGHT, Colors.StatsBackground, (GameSettings.INVENTORY_WIDTH + 1, 1));
             statConsole.Print(1, 1, "Stats");
 
-
             container.Children.Add(statConsole);
-            container.Children.MoveToBottom(statConsole);
 
             // Inventory console
-            Console inventoryConsole = new Console(GameSettings.INVENTORY_WIDTH, GameSettings.INVENTORY_HEIGHT);
-            inventoryConsole.Position = new Point(1, 1);
-            inventoryConsole.Surface.DefaultBackground = Colors.InventoryBackground;
-            inventoryConsole.Clear();
-            inventoryConsole.Cursor.Position = new Point(1, 2);
-            inventoryConsole.Cursor.IsEnabled = true;
-            inventoryConsole.FocusOnMouseClick = true;
-            inventoryConsole.MoveToFrontOnMouseClick = true;
+            Console inventoryConsole = CreateConsole(GameSettings.INVENTORY_WIDTH, GameSettings.INVENTORY_HEIGHT, Colors.InventoryBackground, (1, 1));
             inventoryConsole.Print(1, 1, "Inventory");
 
-
             container.Children.Add(inventoryConsole);
-            container.Children.MoveToBottom(inventoryConsole);
 
+            LevelInitializing(mapConsole);
         }
 
+        private static void LevelInitializing(Console mapConsole)
+        {
+            //Dungeon Map initialization
+            MapGenerator mapGenerator = new MapGenerator(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT);
+            DungeonMap = mapGenerator.CreateMap();
+
+            //Player initialization
+            Player = new Player();
+
+            DungeonMap.UpdatePlayerFieldOfView();
+            DungeonMap.Draw(mapConsole);
+            Player.Draw(mapConsole, DungeonMap);
+        }
+
+        private static Console CreateConsole(int width, int height, Color backgroundColor, Point position)
+        {
+            Console console = new Console(width, height);
+            console.Position = position;
+            console.Surface.DefaultBackground = backgroundColor;
+            console.Clear();
+            console.Cursor.Position = new Point(1, 2);
+            console.Cursor.IsEnabled = true;
+            console.FocusOnMouseClick = true;
+            console.MoveToFrontOnMouseClick = true;
+
+            return console;
+        }
     }
 }
