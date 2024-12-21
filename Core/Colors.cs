@@ -22,5 +22,7 @@ namespace RogueSharpTutorial.Core
         public static Color StatsBackground = new Color(78, 74, 78);
         public static Color MessagesBackground = new Color(48, 52, 109);
         public static Color InventoryBackground = new Color(133, 76, 48);
+
+        public static Color Player = new Color(222, 238, 214);
     }
 }
