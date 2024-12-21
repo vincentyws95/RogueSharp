@@ -1,4 +1,5 @@
-﻿using SadConsole.Configuration;
+﻿using RogueSharpTutorial.Core;
+using SadConsole.Configuration;
 
 namespace RogueSharpTutorial
 {
@@ -29,7 +30,7 @@ namespace RogueSharpTutorial
             //Map Console
             Console mapConsole = new(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT);
             mapConsole.Position = (1, GameSettings.INVENTORY_HEIGHT + 1);
-            mapConsole.Surface.DefaultBackground = Color.Black;
+            mapConsole.Surface.DefaultBackground = Colors.FloorBackground;
             mapConsole.Clear();
             mapConsole.Cursor.IsEnabled = true;
             mapConsole.Cursor.MouseClickReposition = true;
@@ -43,7 +44,7 @@ namespace RogueSharpTutorial
             int startingPosition = GameSettings.INVENTORY_HEIGHT + GameSettings.MAP_HEIGHT + 1;
             Console messageConsole = new Console(GameSettings.MESSAGE_WIDTH, GameSettings.MESSAGE_HEIGHT);
             messageConsole.Position = new Point(1, startingPosition);
-            messageConsole.Surface.DefaultBackground = Color.Gray;
+            messageConsole.Surface.DefaultBackground = Colors.MessagesBackground;
             messageConsole.Clear();
             messageConsole.Cursor.Position = new Point(1, 2);
             messageConsole.Cursor.IsEnabled = true;
@@ -58,7 +59,7 @@ namespace RogueSharpTutorial
             Console statConsole = new Console(GameSettings.STAT_WIDTH, GameSettings.STAT_HEIGHT);
             startingPosition = GameSettings.INVENTORY_WIDTH+1;
             statConsole.Position = new Point(startingPosition, 1);
-            statConsole.Surface.DefaultBackground = Color.SandyBrown;
+            statConsole.Surface.DefaultBackground = Colors.StatsBackground;
             statConsole.Clear();
             statConsole.Cursor.Position = new Point(1, 2);
             statConsole.Cursor.IsEnabled = true;
@@ -73,7 +74,7 @@ namespace RogueSharpTutorial
             // Inventory console
             Console inventoryConsole = new Console(GameSettings.INVENTORY_WIDTH, GameSettings.INVENTORY_HEIGHT);
             inventoryConsole.Position = new Point(1, 1);
-            inventoryConsole.Surface.DefaultBackground = Color.DarkCyan;
+            inventoryConsole.Surface.DefaultBackground = Colors.InventoryBackground;
             inventoryConsole.Clear();
             inventoryConsole.Cursor.Position = new Point(1, 2);
             inventoryConsole.Cursor.IsEnabled = true;
