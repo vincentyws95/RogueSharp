@@ -1,6 +1,8 @@
 ﻿using RogueSharpTutorial.Core;
+using RogueSharpTutorial.Library;
 using RogueSharpTutorial.System;
 using SadConsole.Configuration;
+using SadConsole.Input;
 
 namespace RogueSharpTutorial
 {
@@ -9,18 +11,25 @@ namespace RogueSharpTutorial
         public static DungeonMap DungeonMap { get; private set; }
         public static Player Player { get; private set; }
 
+        private static bool _renderRequired = false;
+        public static CommandSystem CommandSystem { get; private set; }
+
         public static void Main()
         {
             Settings.WindowTitle = "RogueSharp Tutorial - Level 1";
 
-            Builder configuration = new Builder()
-                    .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
-                    .OnStart(Startup);
+            //Builder configuration = new Builder()
+            //        .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
+            //        .OnStart(Startup);
+                Builder configuration = new Builder()
+            .SetScreenSize(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
+            .SetStartingScreen<RootScreen>()
+            .IsStartingScreenFocused(true);
+
 
             Game.Create(configuration);
             Game.Instance.Run();
             Game.Instance.Dispose();
-
 
         }
 
@@ -32,7 +41,7 @@ namespace RogueSharpTutorial
             Game.Instance.Screen = container;
 
             //Map Console
-            Console mapConsole = CreateConsole(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT, Colors.FloorBackground, (1, GameSettings.INVENTORY_HEIGHT + 1)); 
+            Console mapConsole = CreateConsole(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT, Colors.FloorBackground, (1, GameSettings.INVENTORY_HEIGHT + 1));
             container.Children.Add(mapConsole);
 
             // Message console
@@ -57,20 +66,6 @@ namespace RogueSharpTutorial
             LevelInitializing(mapConsole);
         }
 
-        private static void LevelInitializing(Console mapConsole)
-        {
-            //Dungeon Map initialization
-            MapGenerator mapGenerator = new MapGenerator(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT);
-            DungeonMap = mapGenerator.CreateMap();
-
-            //Player initialization
-            Player = new Player();
-
-            DungeonMap.UpdatePlayerFieldOfView();
-            DungeonMap.Draw(mapConsole);
-            Player.Draw(mapConsole, DungeonMap);
-        }
-
         private static Console CreateConsole(int width, int height, Color backgroundColor, Point position)
         {
             Console console = new Console(width, height);
@@ -84,5 +79,26 @@ namespace RogueSharpTutorial
 
             return console;
         }
+
+
+        private static void LevelInitializing(Console mapConsole)
+        {
+            //Dungeon Map initialization
+            MapGenerator mapGenerator = new MapGenerator(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT);
+            DungeonMap = mapGenerator.CreateMap();
+
+            //Player initialization
+            Player = new Player();
+
+            DungeonMap.UpdatePlayerFieldOfView();
+            DungeonMap.Draw(mapConsole);
+            Player.Draw(mapConsole, DungeonMap);
+
+            //Command System
+            CommandSystem = new CommandSystem();
+
+        }
+
+        
     }
 }
