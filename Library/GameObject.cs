@@ -25,8 +25,11 @@ namespace RogueSharpTutorial.Library
             DrawGameObject(hostingSurface);
         }
 
-        public void Move(Point newPosition, IScreenSurface screenSurface)
+        public bool Move(Point newPosition, IScreenSurface screenSurface)
         {
+            if(!screenSurface.Surface.IsValidCell(newPosition.X, newPosition.Y))
+                return false;
+
             //restore the old cell to the current position
             _mapAppearance.CopyAppearanceTo(screenSurface.Surface[Position]);
             
@@ -35,6 +38,7 @@ namespace RogueSharpTutorial.Library
 
             Position = newPosition; 
             DrawGameObject(screenSurface);
+            return true;
         }
 
         private void DrawGameObject(IScreenSurface screenSurface)
