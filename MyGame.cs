@@ -43,6 +43,7 @@ namespace RogueSharpTutorial
             //Map Console
             Console mapConsole = CreateConsole(GameSettings.MAP_WIDTH, GameSettings.MAP_HEIGHT, Colors.FloorBackground, (1, GameSettings.INVENTORY_HEIGHT + 1));
             container.Children.Add(mapConsole);
+            
 
             // Message console
             int startingPosition = GameSettings.INVENTORY_HEIGHT + GameSettings.MAP_HEIGHT + 1;
@@ -88,11 +89,10 @@ namespace RogueSharpTutorial
             DungeonMap = mapGenerator.CreateMap();
 
             //Player initialization
-            Player = new Player();
+            Player = new Player(new ColoredGlyph(Color.White, Color.Black, 2), DungeonMap.SurfaceObject.Surface.Area.Center, DungeonMap.SurfaceObject);
 
             DungeonMap.UpdatePlayerFieldOfView();
             DungeonMap.Draw(mapConsole);
-            Player.Draw(mapConsole, DungeonMap);
 
             //Command System
             CommandSystem = new CommandSystem();

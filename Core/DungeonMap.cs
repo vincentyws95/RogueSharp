@@ -1,9 +1,45 @@
-﻿using RogueSharp;
+﻿using System.Diagnostics.CodeAnalysis;
+using RogueSharp;
+using RogueSharpTutorial.Library;
+using Point = SadRogue.Primitives.Point;
 
 namespace RogueSharpTutorial.Core
 {
     public class DungeonMap : Map
     {
+        private ScreenSurface _mapSurface;
+        private IList<GameObject> _mapObjects;
+
+        public IReadOnlyList<GameObject> MapObjects => _mapObjects.AsReadOnly();
+
+        public ScreenSurface SurfaceObject => _mapSurface;
+
+        public DungeonMap(int width, int height, Color backgroundColor, Point position)
+        {
+            _mapObjects = new List<GameObject>();
+            _mapSurface = new ScreenSurface(width, height);
+            _mapSurface.UseMouse = false;
+            _mapSurface.Surface.DefaultBackground = backgroundColor;
+
+
+        }
+
+        public bool TryGetMapObject(Point position, [NotNullWhen(true)] out GameObject? gameObject)
+        {
+            // Try to find a map object at that position
+            foreach (var otherGameObject in _mapObjects)
+            {
+                if (otherGameObject.Position == position)
+                {
+                    gameObject = otherGameObject;
+                    return true;
+                }
+            }
+
+            gameObject = null;
+            return false;
+        }
+
         public void Draw(Console mapConsole)
         {
             mapConsole.Clear();
@@ -53,7 +89,7 @@ namespace RogueSharpTutorial.Core
         {
             Player player = MyGame.Player;
             //Compute the field-of-view based on player's position and awareness
-            ComputeFov(player.X, player.Y, player.Awareness, true);
+            ComputeFov(player.Position.X, player.Position.Y, player.Awareness, true);
 
             //mark all cells in field of view as being explored
             foreach(Cell cell in GetAllCells())

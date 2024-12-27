@@ -1,15 +1,18 @@
-﻿namespace RogueSharpTutorial.Core
+﻿using RogueSharpTutorial.Interfaces;
+using RogueSharpTutorial.Library;
+
+namespace RogueSharpTutorial.Core
 {
-    public class Player : Actor
+    public class Player : GameObject, IActor
     {
-        public Player()
+        public string Name { get; set; }
+        public int Awareness { get; set; }
+
+        public Player(ColoredGlyph appearance, Point position, IScreenSurface hostingSurface) : base(appearance, position, hostingSurface)
         {
             Awareness = 5;
             Name = "Rogue";
-            Color = Colors.Player;
-            Symbol = '@';
-            X = 10;
-            Y = 10;
         }
+        
     }
 }

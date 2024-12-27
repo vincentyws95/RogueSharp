@@ -15,7 +15,7 @@ namespace RogueSharpTutorial.System
         {
             _width = width;
             _height = height;
-            _map = new DungeonMap();
+            //_map = new DungeonMap();
         }
 
         // Generate a new map that is a simple open floor with walls around the outside

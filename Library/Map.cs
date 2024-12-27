@@ -3,7 +3,7 @@ using RogueSharpTutorial.Library;
 
 namespace SadConsoleGame;
 
-internal class Map
+public class Map
 {
     private ScreenSurface _mapSurface;
     private IList<GameObject> _mapObjects;
@@ -23,8 +23,38 @@ internal class Map
         FillBackground();
 
         UserControlledObject = new GameObject(new ColoredGlyph(Color.White, Color.Black, 2), _mapSurface.Surface.Area.Center, _mapSurface);
-        CreateTreasure();
-        CreateMonster();
+
+        for (int i = 0; i < 5; i++)
+        {
+            CreateTreasure();
+            CreateMonster();
+        }
+       
+    }
+
+    public bool TryGetMapObject(Point position, [NotNullWhen(true)] out GameObject? gameObject)
+    {
+        // Try to find a map object at that position
+        foreach (var otherGameObject in _mapObjects)
+        {
+            if (otherGameObject.Position == position)
+            {
+                gameObject = otherGameObject;
+                return true;
+            }
+        }
+
+        gameObject = null;
+        return false;
+    }
+
+    public void RemoveMapObject(GameObject mapObject)
+    {
+        if (_mapObjects.Contains(mapObject))
+        {
+            _mapObjects.Remove(mapObject);
+            //mapObject.RestoreMap(this);
+        }
     }
 
     private void FillBackground()
@@ -54,7 +84,7 @@ internal class Map
             if (foundObject) continue;
 
             // If the code reaches here, we've got a good position, create the game object.
-            GameObject treasure = new GameObject(new ColoredGlyph(Color.Yellow, Color.Black, 'v'), randomPosition, _mapSurface);
+            Treasure treasure = new Treasure(randomPosition, _mapSurface);
             _mapObjects.Add(treasure);
             break;
         }
@@ -74,7 +104,7 @@ internal class Map
             if (foundObject) continue;
 
             // If the code reaches here, we've got a good position, create the game object.
-            GameObject monster = new GameObject(new ColoredGlyph(Color.Red, Color.Black, 'M'), randomPosition, _mapSurface);
+            Monster monster = new Monster(randomPosition, _mapSurface);
             _mapObjects.Add(monster);
             break;
         }
